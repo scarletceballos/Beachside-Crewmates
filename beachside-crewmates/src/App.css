@@ -319,3 +319,87 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+
+/* Assignment additions: searchable gallery and spotlight */
+.gallery-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 22px; }
+.search-control { display: flex; align-items: center; gap: 9px; flex: 1 1 260px; min-width: 0; padding: 0 13px; border: 1px solid var(--line, #d7e5df); border-radius: 14px; background: rgba(255,255,255,.86); }
+.search-control input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; padding: 13px 0; color: inherit; }
+.gallery-tools select { min-height: 44px; padding: 0 12px; border: 1px solid var(--line, #d7e5df); border-radius: 12px; background: white; color: inherit; }
+.spotlight-panel { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin: 0 0 24px; padding: 22px 26px; }
+.spotlight-panel h2 { margin: 4px 0; }
+.spotlight-panel p { margin: 4px 0 8px; }
+@media (max-width: 640px) { .spotlight-panel { align-items: flex-start; flex-direction: column; } .gallery-tools > * { width: 100%; } }
+.button-outline { border: 1px solid #c8ded6; background: #fff; color: #27675d; }
+.button-outline:hover { background: #f0f8f4; }
+
+/* Ocean-inspired motion: the loader rises like a tide, then drains away. */
+.nav-shell { transform-origin: center; animation: shell-turn 7s linear infinite; }
+.nav-shell svg { filter: drop-shadow(0 3px 2px rgba(228, 139, 124, .14)); }
+.hero::after { animation: shore-swell 8s ease-in-out infinite alternate; }
+.hero-sun, .card-sun, .detail-sun { animation: sun-drift 5s ease-in-out infinite; }
+.card-cloud { animation: cloud-drift 9s ease-in-out infinite alternate; }
+.cloud-b { animation-delay: -4s; }
+.card-art { isolation: isolate; }
+.card-ocean-waves { position: absolute; z-index: 1; left: -12%; right: -12%; bottom: -3px; height: 58px; overflow: hidden; pointer-events: none; }
+.card-ocean-waves span { position: absolute; left: -12%; width: 124%; height: 43px; border-radius: 46% 54% 0 0 / 45% 55% 0 0; background: rgba(226, 255, 250, .48); }
+.card-ocean-waves span:first-child { bottom: -14px; transform: rotate(-2deg); animation: card-wave-drift 6.5s ease-in-out infinite alternate; }
+.card-ocean-waves span:last-child { bottom: -21px; left: -8%; background: rgba(255, 255, 255, .35); transform: rotate(2deg); animation: card-wave-drift 8s ease-in-out infinite alternate-reverse; }
+.card-glint { position: absolute; z-index: 2; color: rgba(255,255,255,.95); text-shadow: 0 1px 5px rgba(65, 165, 177, .25); pointer-events: none; animation: sea-glint 3s ease-in-out infinite; }
+.glint-a { left: 13%; bottom: 31px; font-size: 18px; }
+.glint-b { right: 15%; bottom: 54px; font-size: 15px; animation-delay: -1.5s; }
+.villager-card:hover .card-ocean-waves span:first-child { animation-duration: 3.4s; }
+.villager-card:hover .card-glint { animation-duration: 1.4s; }
+.feature-card { position: relative; overflow: hidden; }
+.feature-card::after { content: ''; position: absolute; width: 140%; height: 30px; left: -20%; bottom: -19px; border-radius: 50%; background: rgba(255,255,255,.35); animation: card-wave-drift 8s ease-in-out infinite alternate; pointer-events: none; }
+.progress-fill { background-size: 200% 100%; animation: current-shimmer 3s linear infinite; }
+.detail-art::after { animation: shore-swell 7s ease-in-out infinite alternate; }
+
+.ocean-loader { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; overflow: hidden; background: #35b6c5; color: #f9fffc; isolation: isolate; transform: translateY(0); }
+.ocean-loader--entering { animation: ocean-curtain-rise 1.15s cubic-bezier(.65,0,.35,1) both; }
+.ocean-loader--leaving { animation: ocean-curtain-fall 1s cubic-bezier(.7,0,.3,1) both; }
+.ocean-loader-surface { position: absolute; inset: 0; overflow: hidden; background: linear-gradient(160deg, #6ed5dc 0%, #35b6c5 43%, #198ca6 100%); }
+.ocean-loader-surface::before { content: ''; position: absolute; inset: 0; opacity: .28; background: repeating-linear-gradient(125deg, transparent 0 48px, rgba(255,255,255,.17) 49px 51px, transparent 52px 95px); animation: water-lines 13s linear infinite; }
+.loader-wave { position: absolute; left: -15%; width: 130%; height: 24vh; min-height: 145px; border-radius: 48% 52% 0 0 / 28% 35% 0 0; }
+.loader-wave-back { top: -9vh; background: rgba(196, 250, 242, .8); transform: rotate(-3deg); animation: loader-wave-roll 5.5s ease-in-out infinite alternate; }
+.loader-wave-front { top: -5vh; background: rgba(244, 255, 246, .95); transform: rotate(2deg); animation: loader-wave-roll 7s ease-in-out infinite alternate-reverse; }
+.ocean-loader-message { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 28px; text-align: center; text-shadow: 0 2px 12px rgba(10, 89, 110, .18); animation: loader-message-float 3s ease-in-out infinite; }
+.ocean-loader-message > svg { color: #fff3d0; animation: shell-turn 5s ease-in-out infinite; }
+.ocean-loader-message strong { font-size: clamp(25px, 4vw, 38px); font-weight: 900; letter-spacing: -.8px; }
+.ocean-loader-message > span:not(.loader-dots) { font-size: 14px; font-weight: 700; color: rgba(255,255,255,.9); }
+.loader-dots { margin-top: 5px; font-size: 9px; letter-spacing: 5px; animation: loader-dots 1.2s ease-in-out infinite; }
+.loader-bubble { position: absolute; bottom: -45px; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.7); border-radius: 50%; animation: bubble-rise 5s linear infinite; }
+.bubble-one { left: 17%; }
+.bubble-two { left: 72%; width: 20px; height: 20px; animation-delay: -2.2s; animation-duration: 6.5s; }
+.bubble-three { left: 87%; width: 8px; height: 8px; animation-delay: -3.7s; animation-duration: 4.5s; }
+
+@keyframes ocean-curtain-rise { from { transform: translateY(105%); } to { transform: translateY(0); } }
+@keyframes ocean-curtain-fall { from { transform: translateY(0); } to { transform: translateY(110%); } }
+@keyframes shell-turn { 0% { rotate: -18deg; } 50% { rotate: 162deg; } 100% { rotate: 342deg; } }
+@keyframes shore-swell { from { transform: translateX(-2%) rotate(-2deg) scaleY(.88); } to { transform: translateX(2%) rotate(2deg) scaleY(1.12); } }
+@keyframes sun-drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes cloud-drift { from { translate: -7px 0; } to { translate: 12px 0; } }
+@keyframes card-wave-drift { from { translate: -3% 0; } to { translate: 5% -5px; } }
+@keyframes sea-glint { 0%, 100% { opacity: .35; transform: scale(.75) rotate(0); } 50% { opacity: 1; transform: scale(1.12) rotate(18deg); } }
+@keyframes current-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+@keyframes loader-wave-roll { from { translate: -4% 0; } to { translate: 5% 14px; } }
+@keyframes water-lines { from { background-position: 0 0; } to { background-position: 190px 100px; } }
+@keyframes loader-message-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
+@keyframes loader-dots { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+@keyframes bubble-rise { from { transform: translateY(0) translateX(0); opacity: 0; } 12% { opacity: .8; } 85% { opacity: .6; } to { transform: translateY(-115vh) translateX(24px); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-shell, .hero::after, .hero-sun, .card-sun, .detail-sun, .card-cloud,
+  .card-ocean-waves span, .card-glint, .feature-card::after, .progress-fill,
+  .detail-art::after, .ocean-loader--entering, .ocean-loader--leaving,
+  .loader-wave, .ocean-loader-surface::before, .ocean-loader-message,
+  .ocean-loader-message > svg, .loader-dots, .loader-bubble {
+    animation: none !important;
+  }
+  .ocean-loader--entering { transform: translateY(0); }
+  .ocean-loader--leaving { transform: translateY(110%); }
+}
+@media (max-width: 650px) {
+  .nav-inner { position: relative; padding-right: 24px; }
+  .nav-shell { display: grid; position: absolute; top: 10px; right: 0; }
+}

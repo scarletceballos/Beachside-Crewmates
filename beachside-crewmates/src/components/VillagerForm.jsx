@@ -7,6 +7,10 @@ import {
   categoryIcons,
 } from '../data/villagerOptions.js'
 import VillagerAvatar from './VillagerAvatar.jsx'
+import { Filter } from 'bad-words'
+
+const profanityFilter = new Filter()
+const textFields = ['name', 'specialty', 'personality', 'favorite_activity', 'favorite_phrase']
 
 const emptyVillager = {
   name: '',
@@ -47,6 +51,11 @@ export default function VillagerForm({
   const handleSubmit = async (event) => {
     event.preventDefault()
     if (!form.name.trim()) return setLocalError('Enter a villager name.')
+    for (const field of textFields) {
+      const value = String(form[field] || '').trim()
+      if (profanityFilter.isProfane(value)) return setLocalError('Please remove inappropriate language before saving this villager.')
+    }
+    if (form.name.trim().length > 40) return setLocalError('Villager names must be 40 characters or fewer.')
     if (!form.category) return setLocalError('Choose an island role.')
     if (!form.personality) return setLocalError('Choose a personality.')
     if (!form.specialty || !specialties.includes(form.specialty)) {
@@ -151,7 +160,7 @@ export default function VillagerForm({
             <input
               value={form.favorite_activity}
               onChange={(event) => update('favorite_activity', event.target.value)}
-              placeholder="e.g. collecting seashells, being lazy"
+              placeholder="e.g. Collecting seashells"
               maxLength={100}
             />
           </label>
@@ -161,7 +170,7 @@ export default function VillagerForm({
             <input
               value={form.favorite_phrase}
               onChange={(event) => update('favorite_phrase', event.target.value)}
-              placeholder="e.g. Sea ya!"
+              placeholder="e.g. Sea you soon!"
               maxLength={100}
             />
           </label>

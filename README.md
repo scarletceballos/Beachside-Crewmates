@@ -2,9 +2,9 @@
 
 Submitted by: **Scarlet Ceballos**
 
-This web app: **insert description**
+This web app: **Inspired by Animal Crossing New Horizons, create custom villagers with personalities and specialities to have your own island crew!**
 
-Time spent: **X** hours spent in total
+Time spent: **14** hours spent in total
 
 ## Required Features
 
@@ -31,19 +31,21 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-- [ ] A crewmate can be given a category upon creation which restricts their attribute value options
+- [x] A crewmate can be given a category upon creation which restricts their attribute value options
   - e.g., a Dungeons and Dragons class or a development team role (project manager, product owner, etc.)
   - User can choose a `category` option to describe their crewmate before any attributes are specified
   - Based on the category value, users are allowed to access only a subset of the possible attributes
-- [ ] A section of the summary page, displays summary statistics about a user’s crew on their crew page
+- [x] A section of the summary page, displays summary statistics about a user’s crew on their crew page
   - e.g., the percent of members with a certain attribute 
-- [ ] The summary page displays a custom “success” metric about a user’s crew which changes the look of the crewmate list
+- [x] The summary page displays a custom “success” metric about a user’s crew which changes the look of the crewmate list
   - e.g., a pirate crew’s predicted success at commandeering a new galley
 
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you added to improve the site's functionality!
+* [x] Random Islander Spotlight: Selects a random villager and navigate their profile
+* [x] Search and role filters: Filter villagers by name, personality, speciality, or role without browsing the entire gallery
+* [x] Content filtering in client side
 
 ## Video Walkthrough
 
@@ -51,7 +53,6 @@ Here's a walkthrough of implemented user stories:
 
 <img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
-<!-- Replace this with whatever GIF tool you used! -->
 GIF created with ...  
 <!-- Recommended tools:
 [Kap](https://getkap.co/) for macOS

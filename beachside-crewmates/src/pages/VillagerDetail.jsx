@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Edit3, CalendarDays, Heart, Leaf, MessageCircle, Star, Waves } from 'lucide-react'
+import { ArrowLeft, Edit3, CalendarDays, Heart, Leaf, MessageCircle, Star, Waves, Copy, Check } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import VillagerAvatar from '../components/VillagerAvatar.jsx'
 import { categoryIcons, personalityEmojis } from '../data/villagerOptions.js'
@@ -10,6 +10,7 @@ export default function VillagerDetail({ getVillager, deleteVillager }) {
   const [villager, setVillager] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -22,6 +23,14 @@ export default function VillagerDetail({ getVillager, deleteVillager }) {
     })
     return () => { active = false }
   }, [id, getVillager])
+
+  const copyProfileLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1800)
+    } catch { setError('Could not copy automatically. Copy the URL from your browser address bar.') }
+  }
 
   const handleDelete = async () => {
     if (!window.confirm(`Delete ${villager.name} from your island? This cannot be undone.`)) return
@@ -60,6 +69,7 @@ export default function VillagerDetail({ getVillager, deleteVillager }) {
           <div className="quote-box"><MessageCircle size={18} /><div><small>Favorite phrase</small><p>{villager.favorite_phrase ? `“${villager.favorite_phrase}”` : 'No favorite phrase added yet.'}</p></div></div>
           <div className="detail-actions">
             <Link to={`/villager/${villager.id}/edit`} className="button button-coral"><Edit3 size={17} /> Edit villager</Link>
+            <button className="button button-outline" onClick={copyProfileLink}><Copy size={16} /> {copied ? 'Link copied' : 'Copy profile link'}</button>
             <button className="button button-outline-danger" onClick={handleDelete}>Delete</button>
           </div>
         </div>

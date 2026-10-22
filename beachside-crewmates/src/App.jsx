@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { AlertTriangle } from 'lucide-react'
 import Navbar from './components/Navbar.jsx'
 import Wave from './components/Wave.jsx'
+import OceanLoader from './components/OceanLoader.jsx'
 import Home from './pages/Home.jsx'
 import Gallery from './pages/Gallery.jsx'
 import CreateVillager from './pages/CreateVillager.jsx'
@@ -17,9 +18,8 @@ function AppFooter() {
     <footer className="site-footer">
       <Wave className="footer-wave" />
       <div className="footer-inner">
-        <div className="footer-brand"><span>🌴</span><strong>Beachside Crewmates</strong></div>
-        <p>Build a crew. Create your story.</p>
-        <span className="footer-shells" aria-hidden="true">🐚　🌺　🪸</span>
+        <div className="footer-brand"><strong>CodePath WEB102 Project</strong></div>
+        <span className="footer-brand" aria-hidden="true">Based on Animal Crossing by NINTENDO</span>
       </div>
     </footer>
   )
@@ -30,6 +30,15 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const getSessionUser = async () => {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+    if (sessionError) throw sessionError
+    if (sessionData.session?.user) return sessionData.session.user
+    const { data, error: authError } = await supabase.auth.signInAnonymously()
+    if (authError) throw new Error(`Could not start a private session. Enable Anonymous Sign-Ins in Supabase Auth: ${authError.message}`)
+    return data.user
+  }
+
   const refreshVillagers = useCallback(async () => {
     if (!isSupabaseConfigured) {
       setVillagers(starterVillagers)
@@ -38,9 +47,17 @@ export default function App() {
       return
     }
     setLoading(true)
+    let user
+    try { user = await getSessionUser() } catch (authError) {
+      setError(authError.message)
+      setVillagers([])
+      setLoading(false)
+      return
+    }
     const { data, error: fetchError } = await supabase
       .from('villagers')
       .select('*')
+      .eq('owner_id', user.id)
       .order('created_at', { ascending: false })
     if (fetchError) {
       setError(`Could not load villagers: ${fetchError.message}`)
@@ -56,7 +73,9 @@ export default function App() {
 
   const createVillager = useCallback(async (values) => {
     if (!isSupabaseConfigured) return { error: 'Add your Supabase URL and publishable key to .env, then restart the dev server.' }
-    const { data, error: insertError } = await supabase.from('villagers').insert(values).select().single()
+    let user
+    try { user = await getSessionUser() } catch (authError) { return { error: authError.message } }
+    const { data, error: insertError } = await supabase.from('villagers').insert({ ...values, owner_id: user.id }).select().single()
     if (insertError) return { error: `Could not create villager: ${insertError.message}` }
     setVillagers((current) => [data, ...current])
     setError('')
@@ -69,14 +88,18 @@ export default function App() {
       return demo ? { data: demo } : { error: 'Villager not found.' }
     }
     if (!isSupabaseConfigured) return { error: 'Configure Supabase to load saved villager profiles.' }
-    const { data, error: fetchError } = await supabase.from('villagers').select('*').eq('id', id).maybeSingle()
+    let user
+    try { user = await getSessionUser() } catch (authError) { return { error: authError.message } }
+    const { data, error: fetchError } = await supabase.from('villagers').select('*').eq('id', id).eq('owner_id', user.id).maybeSingle()
     if (fetchError) return { error: `Could not load villager: ${fetchError.message}` }
     return data ? { data } : { error: 'Villager not found.' }
   }, [])
 
   const updateVillager = useCallback(async (id, values) => {
     if (!isSupabaseConfigured) return { error: 'Configure Supabase before editing saved villagers.' }
-    const { data, error: updateError } = await supabase.from('villagers').update({ ...values, updated_at: new Date().toISOString() }).eq('id', id).select().single()
+    let user
+    try { user = await getSessionUser() } catch (authError) { return { error: authError.message } }
+    const { data, error: updateError } = await supabase.from('villagers').update({ ...values, updated_at: new Date().toISOString() }).eq('id', id).eq('owner_id', user.id).select().single()
     if (updateError) return { error: `Could not update villager: ${updateError.message}` }
     setVillagers((current) => current.map((villager) => villager.id === id ? data : villager))
     return { data }
@@ -84,7 +107,9 @@ export default function App() {
 
   const deleteVillager = useCallback(async (id) => {
     if (!isSupabaseConfigured) return { error: 'Configure Supabase before deleting villagers.' }
-    const { error: deleteError } = await supabase.from('villagers').delete().eq('id', id)
+    let user
+    try { user = await getSessionUser() } catch (authError) { return { error: authError.message } }
+    const { error: deleteError } = await supabase.from('villagers').delete().eq('id', id).eq('owner_id', user.id)
     if (deleteError) return { error: `Could not delete villager: ${deleteError.message}` }
     setVillagers((current) => current.filter((villager) => villager.id !== id))
     return {}
@@ -93,6 +118,7 @@ export default function App() {
   return (
     <div className="app">
       <Navbar />
+      <OceanLoader show={loading} />
       {!isSupabaseConfigured && (
         <div className="setup-banner"><AlertTriangle size={17} /><span>Preview mode: add your Supabase credentials to enable persistent data.</span></div>
       )}

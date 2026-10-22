@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Plus, Users, Heart, Sparkles, Leaf, Shell } from 'lucide-react'
+import { Plus, Users, Heart, Sparkles, Leaf, Shell, Search, Shuffle } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import VillagerCard from '../components/VillagerCard.jsx'
 import StatCard from '../components/StatCard.jsx'
 import { categories, personalities, categoryIcons } from '../data/villagerOptions.js'
@@ -18,6 +19,15 @@ export function getCrewStats(villagers) {
 
 export default function Gallery({ villagers, loading, error, refresh }) {
   const stats = getCrewStats(villagers)
+  const [search, setSearch] = useState('')
+  const [roleFilter, setRoleFilter] = useState('All roles')
+  const [spotlightId, setSpotlightId] = useState('')
+  const filteredVillagers = useMemo(() => villagers.filter((villager) => {
+    const term = search.trim().toLowerCase()
+    const matchesText = !term || [villager.name, villager.category, villager.specialty, villager.personality].some((value) => String(value || '').toLowerCase().includes(term))
+    return matchesText && (roleFilter === 'All roles' || villager.category === roleFilter)
+  }), [villagers, search, roleFilter])
+  const spotlight = villagers.find((villager) => villager.id === spotlightId)
 
   return (
     <main className="page-shell">
@@ -64,16 +74,21 @@ export default function Gallery({ villagers, loading, error, refresh }) {
         </div>
       </section>
 
+      {spotlight && <section className="spotlight-panel panel"><div><span className="eyebrow">Random island spotlight</span><h2>{spotlight.name}</h2><p>{spotlight.personality} · {spotlight.specialty}</p><Link className="text-button" to={`/villager/${spotlight.id}`}>Visit profile</Link></div><button className="button button-teal" onClick={() => setSpotlightId(villagers[Math.floor(Math.random() * villagers.length)]?.id || '')}><Shuffle size={16} /> Pick another</button></section>}
+
       <section className="gallery-section">
         <div className="section-heading align-left">
           <span className="eyebrow"><Shell size={15} /> Your island residents</span>
           <h2>Meet the crew <span className="count-pill">{stats.total}</span></h2>
         </div>
+        <div className="gallery-tools"><label className="search-control"><Search size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search names, roles, specialties..." aria-label="Search villagers" /></label><select value={roleFilter} onChange={(event) => setRoleFilter(event.target.value)} aria-label="Filter by role"><option>All roles</option>{categories.map((role) => <option key={role}>{role}</option>)}</select><button className="button button-outline" disabled={!villagers.length} onClick={() => setSpotlightId(villagers[Math.floor(Math.random() * villagers.length)]?.id || '')}><Shuffle size={16} /> Random spotlight</button></div>
         {error && <div className="notice error-message">{error} <button className="text-button" onClick={refresh}>Try again</button></div>}
         {loading ? (
           <div className="loading-state"><span className="loading-palm">🌴</span><p>Collecting seashells and finding your villagers...</p></div>
+        ) : filteredVillagers.length ? (
+          <div className="villager-grid">{filteredVillagers.map((villager, index) => <VillagerCard key={villager.id} villager={villager} index={index} />)}</div>
         ) : villagers.length ? (
-          <div className="villager-grid">{villagers.map((villager, index) => <VillagerCard key={villager.id} villager={villager} index={index} />)}</div>
+          <div className="empty-state"><span>🔎</span><h3>No villagers match those filters</h3><p>Try a different search term or role.</p><button className="button button-teal" onClick={() => { setSearch(''); setRoleFilter('All roles') }}>Clear filters</button></div>
         ) : (
           <div className="empty-state"><span>🐚</span><h3>Your island is waiting for its first resident</h3><p>Add a villager to start your collection and unlock your crew statistics.</p><Link className="button button-coral" to="/create"><Plus size={17} /> Create your first villager</Link></div>
         )}

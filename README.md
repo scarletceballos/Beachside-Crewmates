@@ -4,7 +4,7 @@ Submitted by: **Scarlet Ceballos**
 
 This web app: **Inspired by Animal Crossing New Horizons, create custom villagers with personalities and specialities to have your own island crew!**
 
-Time spent: **14** hours spent in total
+Time spent: **20** hours spent in total
 
 ## Required Features
 
@@ -51,17 +51,17 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='beachside-crewmates/src/assets/seasidepreview.gif' title='Video Walkthrough' width='850' alt='Video Walkthrough' />
 
-GIF created with ...  
-<!-- Recommended tools:
-[Kap](https://getkap.co/) for macOS
-[ScreenToGif](https://www.screentogif.com/) for Windows
-[peek](https://github.com/phw/peek) for Linux. -->
+GIF created with [N-Studio](https://nicke.tech/n-studio) for Windows
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+1. Configuring Supabase for creating, editing, and deleting villagers required troubleshooting database permissions, Row Level Security (RLS) policies, and table schemas to ensure users could manage their own data securely.
+
+2. Building dynamic villager cards, unique detail pages, editable forms, search and filtering, and statistics required coordinating React components, application state, and database operations while keeping the interface consistent.
+
+3. Designing a beach-themed interface with animated ocean waves, a full-screen loading transition, rotating seashells, and interactive cards required balancing visual effects with responsiveness, accessibility, and a smooth user experience across different screen sizes.
 
 ## License
 
